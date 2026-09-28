@@ -53,18 +53,25 @@ h1{
 .hero p.quiet{color:var(--muted);font-size:.98rem}
 
 /* the one bold moment: a real highlight -------------------------------- */
-.hl{
-  background-image:linear-gradient(var(--gold),var(--gold));
-  background-repeat:no-repeat;
-  background-position:0 88%;
-  background-size:0 42%;
-  padding:0 .06em;
-  animation:draw .62s cubic-bezier(.4,.5,.2,1) .75s forwards;
+/* Drawn with a pseudo-element and scaleX rather than an animated
+   background-size: only transform and opacity are GPU-safe, and animating a
+   paint property forces a repaint of the text on every frame. */
+.hl{position:relative;display:inline-block;padding:0 .06em}
+.hl::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:6%;
+  height:42%;
+  background:var(--gold);
   border-radius:1px;
+  z-index:-1;
+  transform:scaleX(0);
+  transform-origin:left center;
+  animation:draw .62s cubic-bezier(.32,.72,0,1) .75s forwards;
 }
-@keyframes draw{to{background-size:100% 42%}}
+@keyframes draw{to{transform:scaleX(1)}}
 @media (prefers-reduced-motion:reduce){
-  .hl{animation:none;background-size:100% 42%}
+  .hl::before{animation:none;transform:scaleX(1)}
 }
 
 /* body ----------------------------------------------------------------- */
